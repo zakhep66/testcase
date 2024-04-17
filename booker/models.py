@@ -2,6 +2,8 @@
 
 from django.db import models
 
+from booker.tasks import notify_users_about_new_book
+
 
 class Author(models.Model):
     name = models.CharField(max_length=100)
