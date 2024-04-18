@@ -26,3 +26,7 @@ def book_list(request):
 def book_detail(request, book_id):
     book = Book.objects.get(id=book_id)
     return render(request, "book_detail.html", {"book": book, "title": book.title})
+
+
+def home(request):
+    return render(request, "home.html")
