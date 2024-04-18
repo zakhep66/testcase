@@ -2,14 +2,16 @@ version: '3'
 
 services:
   django:
-    build: .
-    command: bash -c "poetry run python manage.py migrate && gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 1"
+    build:
+      context: .
+      dockerfile: Django.Dockerfile
+    command: bash -c "poetry run python manage.py migrate  && poetry run python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
       - "8000:8000"
-    depends_on:
-      - db
+#    depends_on:
+#      - db
     environment:
       - REDIS_HOST=redis
     restart: always
@@ -26,14 +28,14 @@ services:
     environment:
       - REDIS_HOST=redis
 
-  db:
-    image: postgres:latest
-    env_file:
-      - .env
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+#  db:
+#    image: postgres:latest
+#    env_file:
+#      - .env
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#    ports:
+#      - "5432:5432"
 
   redis:
     image: redis:latest
@@ -41,7 +43,7 @@ services:
 #  nginx:
 #    build:
 #      context: .
-#      dockerfile: Nginx.Dockerfile
+#      dockerfile: Nginx.Django.Dockerfile
 #    volumes:
 #      - .:/app
 #    ports:

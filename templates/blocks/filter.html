@@ -1,0 +1,42 @@
+{% block filter %}
+    <form id="filterForm" method="GET">
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Фильтр по жанрам:</h3>
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        {% for genre in genres %}
+                            <label class="btn btn-outline-primary">
+                                <input type="checkbox" name="selected_genres" value="{{ genre.name }}"
+                                       autocomplete="off"
+                                       {% if genre.name in selected_genres %}checked{% endif %}> {{ genre.name }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        const checkboxes = document.querySelectorAll('input[name="selected_genres"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                let selectedGenres = Array.from(checkboxes)
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.value);
+                localStorage.setItem('selectedGenres', JSON.stringify(selectedGenres));
+                document.getElementById('filterForm').submit();
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const savedGenres = JSON.parse(localStorage.getItem('selectedGenres')) || [];
+            checkboxes.forEach(checkbox => {
+                if (savedGenres.includes(checkbox.value)) {
+                    checkbox.checked = true;
+                }
+            });
+        });
+    </script>
+{% endblock %}

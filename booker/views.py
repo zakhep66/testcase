@@ -1,20 +1,26 @@
+import functools
+
 from django.shortcuts import render
-from .models import Book
+from django.db.models import Q
+
+from .models import Book, Genre
 
 
 def book_list(request):
-    author = request.GET.get("author")
-    genre = request.GET.get("genre")
+    selected_genres = request.GET.getlist("selected_genres")
 
-    books = Book.objects.all()
+    if selected_genres:
+        genre_queries = [Q(genre__name=genre) for genre in selected_genres]
 
-    if author:
-        books = books.filter(author__name=author)
+        books = Book.objects.filter(
+            functools.reduce(lambda x, y: x | y, genre_queries)
+        ).distinct()
 
-    if genre:
-        books = books.filter(genre__name=genre)
+    else:
+        books = Book.objects.all()
 
-    return render(request, "book_list.html", {"books": books})
+    genres = Genre.objects.all()
+    return render(request, "book_list.html", {"books": books, "genres": genres})
 
 
 def book_detail(request, book_id):
