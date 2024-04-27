@@ -30,4 +30,4 @@ jobs:
         if [ -f pyproject.toml ]; then poetry install; fi
     - name: Lint with black
       run: |
-        black .
+        poetry run black .
